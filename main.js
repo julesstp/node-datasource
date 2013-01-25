@@ -38,7 +38,7 @@ _ = require("underscore");
       }
     });
   };
-  
+
   // Other xTuple libraries
   require("backbone-relational");
   X.relativeDependsPath = X.path.join(X.basePath, "node_modules/tools/source");
@@ -53,19 +53,22 @@ _ = require("underscore");
     return X.String.format.apply(this, arguments);
   };
 
+  // Another hack: quiet the logs here
+  XT.log = function () {};
+
   // make absolutely sure we're going to start
   options.autoStart = true;
 
-  X.debugging = true;
+  //X.debugging = true;
 
   // set the options
   X.setup(options);
-  
-  
+
+
   // initiate the internal session then start
   sessionObjectLoaded = function () {
     if (schema && privs) {
-      
+
       // Start polling for expired user sessions
       X.cachePollingInterval = setInterval(X.Session.pollCache, 10000);
       X.addCleanupTask(function () {
@@ -77,10 +80,11 @@ _ = require("underscore");
     schema = true;
     sessionObjectLoaded();
   };
-  schemaOptions.success = function () {
+  privsOptions.success = function () {
     privs = true;
     sessionObjectLoaded();
   };
+  privsOptions.username = X.options.globalDatabase.nodeUsername;
 
   XT.session = Object.create(XT.Session);
   XT.session.loadSessionObjects(XT.session.SCHEMA, schemaOptions);
